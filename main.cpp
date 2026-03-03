@@ -68,10 +68,9 @@ int main()
 
             microstep_point = (microstep_point + 1) % 8; //8 microstep points
             microsteps++;
+
+            revs += ( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ? 1 : 0;
         }
-
-        revs += ( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ? 1 : 0;
-
         system("clear");
         //Track revolutions when a new revolution has finished
         if (( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ) { std::cout << "Revolutions: " << revs << std::endl; }
