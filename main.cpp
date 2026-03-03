@@ -54,6 +54,9 @@ int main()
     int revs = 0;
     int microsteps = 0;
 
+    mag_requests[1].release();
+    mag_requests[1] = top_builder.do_request();
+
     while (!exit)
     {
 
@@ -76,6 +79,6 @@ int main()
         if (( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ) { std::cout << "Revolutions: " << revs << std::endl; }
 
         //Exit conditions(s)
-        exit = revs >= 40;
+        exit = revs >= 5;
     }
 }
