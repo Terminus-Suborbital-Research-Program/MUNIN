@@ -10,7 +10,7 @@ int main()
 {
     bool exit = false;
 
-    motor_clock clk(300us); //Create a clock to guide the motor
+    motor_clock clk(1ms); //Create a clock to guide the motor
 
     gpiod::chip gpio_ctrl(constants::GPIO_CONTROLLER_PATH); //GPIO chip
 
