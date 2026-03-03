@@ -54,9 +54,6 @@ int main()
     int revs = 0;
     int microsteps = 0;
 
-    mag_requests[1].release();
-    mag_requests[1] = top_builder.do_request();
-
     while (!exit)
     {
 
@@ -80,5 +77,10 @@ int main()
 
         //Exit conditions(s)
         exit = revs >= 5;
+    }
+
+    for (int i = 0; i < 1; i++)
+    {
+        mag_requests[i].release();
     }
 }
