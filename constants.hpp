@@ -3,9 +3,9 @@
 
 namespace constants
 {
-    const std::filesystem::path GPIO_CONTROLLER_PATH = "";
+    const std::filesystem::path GPIO_CONTROLLER_PATH = "/dev/gpiochip0";
 
-    const unsigned int TOP_MAG_PIN = 0;
+    const unsigned int TOP_MAG_PIN = 26;
     const unsigned int RIGHT_MAG_PIN = 0;
     const unsigned int LEFT_MAG_PIN = 0;
     const unsigned int BOTTOM_MAG_PIN = 0;

@@ -25,30 +25,30 @@ int main()
     gpiod::request_builder top_builder = gpio_ctrl.prepare_request(); //Create a request builder from the GPIO chip
     top_builder.set_line_config(top_config); //Set the request builder's config to be the previously created config
 
-    //Left magnet creation
-    gpiod::line_config left_config;
-    top_config.add_line_settings(constants::LEFT_MAG_PIN, settings);
+    // //Left magnet creation
+    // gpiod::line_config left_config;
+    // top_config.add_line_settings(constants::LEFT_MAG_PIN, settings);
 
-    gpiod::request_builder left_builder = gpio_ctrl.prepare_request();
-    top_builder.set_line_config(left_config);
+    // gpiod::request_builder left_builder = gpio_ctrl.prepare_request();
+    // top_builder.set_line_config(left_config);
 
-    //Right magnet creation
-    gpiod::line_config right_config;
-    right_config.add_line_settings(constants::RIGHT_MAG_PIN, settings);
+    // //Right magnet creation
+    // gpiod::line_config right_config;
+    // right_config.add_line_settings(constants::RIGHT_MAG_PIN, settings);
 
-    gpiod::request_builder right_builder = gpio_ctrl.prepare_request();
-    right_builder.set_line_config(left_config);
+    // gpiod::request_builder right_builder = gpio_ctrl.prepare_request();
+    // right_builder.set_line_config(left_config);
 
-    //Bottom magnet creation
-    gpiod::line_config bottom_config;
-    bottom_config.add_line_settings(constants::BOTTOM_MAG_PIN, settings);
+    // //Bottom magnet creation
+    // gpiod::line_config bottom_config;
+    // bottom_config.add_line_settings(constants::BOTTOM_MAG_PIN, settings);
 
-    gpiod::request_builder bottom_builder = gpio_ctrl.prepare_request();
-    bottom_builder.set_line_config(left_config);
+    //gpiod::request_builder bottom_builder = gpio_ctrl.prepare_request();
+    //bottom_builder.set_line_config(left_config);
 
     //An array of line requests for each magnet.
-    gpiod::line_request mag_requests[4] = { top_builder.do_request(), right_builder.do_request(),
-                                            bottom_builder.do_request(), left_builder.do_request() };
+    gpiod::line_request mag_requests[1] = { top_builder.do_request() };//, right_builder.do_request(),
+    //                                         bottom_builder.do_request(), left_builder.do_request() };
 
     unsigned int microstep_point = 0;
     int revs = 0;
@@ -60,9 +60,10 @@ int main()
         if (clk.pastDelay())
         {
             //Apply step sequence value to each magnet
-            for (int i = 0; i < 4; i++) //4 magnets
+            for (int i = 0; i < 1; i++) //4 magnets
             {
-                mag_requests[i].set_value(constants::MAG_OFFSETS[i], gpiod::line::value(constants::STEP_SEQUENCE[microstep_point][i]));
+                mag_requests[i].set_value(constants::MAG_OFFSETS[i], gpiod::line::value(1));
+                //mag_requests[i].set_value(constants::MAG_OFFSETS[i], gpiod::line::value(constants::STEP_SEQUENCE[microstep_point][i]));
             }
 
             microstep_point = (microstep_point + 1) % 8; //8 microstep points
