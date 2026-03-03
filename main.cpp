@@ -10,7 +10,7 @@ int main()
 {
     bool exit = false;
 
-    motor_clock clk(1s); //Create a clock to guide the motor
+    motor_clock clk(2ms); //Create a clock to guide the motor
 
     gpiod::chip gpio_ctrl(constants::GPIO_CONTROLLER_PATH); //GPIO chip
 
@@ -66,19 +66,21 @@ int main()
                 //mag_requests[i].set_value(constants::MAG_OFFSETS[i], gpiod::line::value(constants::STEP_SEQUENCE[microstep_point][i]));
             }
 
-            microstep_point = (microstep_point + 1) % 8; //8 microstep points
+            microstep_point = (microstep_point + 1) % 8;
             microsteps++;
 
-            revs += ( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ? 1 : 0;
+            if (microsteps % constants::MICROSTEPS_PER_REV == 0)
+            {
+                revs++;
+                std::cout << "Revolutions: " << revs << std::endl;
+            }
         }
-
-        //Track revolutions when a new revolution has finished
-        if (( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ) { std::cout << "Revolutions: " << revs << std::endl; }
 
         //Exit conditions(s)
         exit = revs >= 5;
     }
 
+    // Release line requests
     for (int i = 0; i < 1; i++)
     {
         mag_requests[i].release();
