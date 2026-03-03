@@ -71,10 +71,9 @@ int main()
 
             revs += ( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ? 1 : 0;
         }
-        system("clear");
+
         //Track revolutions when a new revolution has finished
         if (( (microsteps % constants::MICROSTEPS_PER_REV) == 0 ) ) { std::cout << "Revolutions: " << revs << std::endl; }
-        std::cout << microsteps << std::endl;
 
         //Exit conditions(s)
         exit = revs >= 40;
