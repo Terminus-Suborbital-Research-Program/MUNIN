@@ -1,0 +1,12 @@
+[package]
+name = "munin-sense"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rppal = { version = "*"}
+bmi323 = { version = "*"}
+bmm350 = { version = "*"}
+iceoryx2 = { version = "*"}
+ublox = {version = "*"}
+nmea = {version = "*"}
