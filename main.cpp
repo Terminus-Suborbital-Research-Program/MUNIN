@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gpiod.hpp>
 
-#include "motor_clock.hpp"
+#include "MotorClock.hpp"
 #include "constants.hpp"
 
 using namespace std::chrono_literals;
@@ -10,7 +10,7 @@ int main()
 {
     bool exit = false;
 
-    motor_clock clk(300us); //Create a clock to guide the motor
+    MotorClock clk(300us); //Create a clock to guide the motor
 
     gpiod::chip gpio_ctrl(constants::GPIO_CONTROLLER_PATH); //GPIO chip
 
