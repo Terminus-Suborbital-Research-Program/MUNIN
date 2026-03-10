@@ -1,4 +1,5 @@
 pub mod data_packet;
+pub mod server;
 
 use bmm350;
 use bmi323;
@@ -12,8 +13,9 @@ fn main() {
     let mut led_blink = Gpio::new().unwrap().get(LED_PIN).unwrap().into_output();
 
     loop {
-        led_blink.set_low();
-                thread::sleep(Duration::from_millis(500));
+        led_blink.toggle();
+        println!("wow");        
+        thread::sleep(Duration::from_millis(1500));
     }
     
 }
