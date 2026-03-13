@@ -1,9 +1,9 @@
-#include "Motor.hpp"
+#include "HalfstepMotor.hpp"
 
 using namespace std::chrono_literals;
 
-Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_pin, const gpiod::line::offset dir_pin, const std::chrono::microseconds PWM,
-        std::filesystem::path gpio_chip_path)
+Motor::Motor(const unsigned int step_resolution, const std::vector<unsigned int> gpio_pins, const std::chrono::microseconds PWM, 
+    std::filesystem::path gpio_chip_path)
     : m_chip(gpio_chip_path)
     , m_driving(false)
     , m_using_pid(false)
@@ -14,25 +14,51 @@ Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_
     , m_step_setpoint(0)
     , m_setpoint_type(Motor::SetpointType::kNONE)
     , m_timer_setpoint(0us)
-    , m_step_pin(step_pin)
-    , m_dir_pin(dir_pin)
-    , m_reverse(false)
+    , m_offsets()
     , m_clk(PWM)
-    , m_pid(0.0, 0.0, 0.0, m_clk, m_reverse, m_microsteps, 0us)
+    , m_pid(0.0, 0.0, 0.0, m_clk, m_microsteps, 0us)
     , m_drive_thread()
-{
+{ 
+    for (unsigned int pin : gpio_pins) //Initialize gpio pins
+    {
+        m_offsets.push_back(gpiod::line::offset(pin));
+    }
+
+    const unsigned int max = gpio_pins.size();
+
+    std::vector<gpiod::line::value_mappings> sequence(max * 2);
+    for (size_t i = 0; i < (max*2); i++) //Fill step sequence
+    {
+        for (size_t j = 0; j < max; j++)
+        {
+            sequence[i].push_back({m_offsets[j], gpiod::line::value::INACTIVE});
+        }
+    }
+
+    for (size_t i = 0; i < (max*2); i++) //Generate step sequence
+    {
+        size_t primary = i / 2;
+        sequence[i][primary] = {sequence[i][primary].first, gpiod::line::value::ACTIVE};
+
+        if (i % 2 == 1)
+            sequence[i][(primary + 1) % max] = {m_offsets[(primary + 1) % max], gpiod::line::value::ACTIVE};
+    }
+    
+    m_step_sequence = std::move(sequence); //Set step sequence
+
     gpiod::line_settings settings;
     settings.set_direction(gpiod::line::direction::OUTPUT); //Set pins for taking requests
     settings.set_output_value(gpiod::line::value::INACTIVE); //By default, be inactive
 
     gpiod::line_config config;
-    config.add_line_settings(gpiod::line::offsets({m_step_pin, m_dir_pin}), settings); 
+    config.add_line_settings(m_offsets, settings); 
     //configure the associated request with the magnet GPIO pin and the preconfigured settings
 
     gpiod::request_builder builder = m_chip.prepare_request(); //Create a request builder from the GPIO chip
     builder.set_line_config(config); //Set the request builder's config to be the previously created config
 
-    m_request = new gpiod::line_request(builder.do_request()); //Create request
+    m_mag_requests.push_back(builder.do_request()); //Create request
+
     
 }
 
@@ -45,11 +71,11 @@ Motor::~Motor()
         m_drive_thread.join();
     }
 
-    m_request->release();
-    delete m_request;
+    for (auto& r : m_mag_requests)
+        r.release();
 }
 
-Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<bool>& reverse, std::atomic<int>& steps, std::chrono::microseconds output_max)
+Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<int>& steps, std::chrono::microseconds output_max)
 : P_constant(P)
 , I_constant(I)
 , D_constant(D)
@@ -63,7 +89,6 @@ Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<boo
 , step_sp_error(0)
 , last_step_sp_error(0)
 , steps(steps)
-, reverse(reverse)
 , time_difference()
 , i_sum()
 , sp_type(SetpointType::kNONE)
@@ -144,11 +169,7 @@ std::chrono::microseconds Motor::PID::calculate()
     last_step_sp_error = step_sp_error;
     last_time_sp_error = time_sp_error;
 
-    output = std::clamp(output, -output_max, output_max);
-
-    reverse = (output < 0us);
-
-    return std::chrono::abs(output);
+    return output = std::clamp(output, 0us, output_max);
 }
 
 
@@ -160,7 +181,7 @@ bool Motor::atSetpoint()
             return m_clk.pastTimer();
 
         case SetpointType::kSTEP:
-            return (m_microsteps >= m_step_setpoint); //Need to add a tolerance
+            return (m_microsteps >= m_step_setpoint);
 
         default:
             return false;
@@ -172,48 +193,41 @@ void Motor::usePID(bool state)
     m_using_pid = state;
 }
 
-void Motor::stepHigh()
-{
-    m_request->set_values(gpiod::line::value_mappings({
-        gpiod::line::value_mapping(m_step_pin, gpiod::line::value(1)), 
-        gpiod::line::value_mapping(m_dir_pin, gpiod::line::value(int(m_reverse)))
-    }));
-}
-
-void Motor::stepLow()
-{
-    m_request->set_values(gpiod::line::value_mappings({
-        gpiod::line::value_mapping(m_step_pin, gpiod::line::value(0)), 
-        gpiod::line::value_mapping(m_dir_pin, gpiod::line::value(int(m_reverse)))
-    }));
-}
-
 void Motor::drive_thread_func()
 {
+    unsigned int i = 0;
+
+    gpiod::line::value_mappings off_mappings;
+    for (gpiod::line::offset offset : m_offsets)
+    {
+        off_mappings.push_back({offset, gpiod::line::value::INACTIVE});
+    }
 
     while (m_driving)
     {
-        if (m_using_pid)
+        if (m_clk.pastDelay()) //Double check if past delay
         {
-            if (atSetpoint()) //Stop movement when at the setpoint
-            {
-                stepLow();
-                m_clk.setDelay(200us); //Preset delay for when at the setpoint
+            i = (i + 1) % m_step_sequence.size(); //Keep iterator in bounds for looping
+            m_microsteps++;
 
-            }
-            else //Else, calculate the next delay
-            {
-                m_clk.setDelay(m_pid.calculate());
-            }
-        }
-        else //If not using the pid, then just continue to run with the given delay
-        {
-            stepHigh();
-            std::this_thread::sleep_for(m_clk.getDelay());
-            stepLow();
+            m_mag_requests[0].set_values(m_step_sequence[i]); //Apply step configuration
         }
         
+        if (m_using_pid)
+        {
+            if (atSetpoint())
+            {
+                m_mag_requests[0].set_values(off_mappings); //Stop movement when at the setpoint
+            }
+
+            m_clk.setDelay(m_pid.calculate());
+        }
+
+        std::this_thread::sleep_for(30us);
+        
     }
+
+    m_mag_requests[0].set_values(off_mappings); //Stop movement when finished driving
 }
 
 void Motor::drive()

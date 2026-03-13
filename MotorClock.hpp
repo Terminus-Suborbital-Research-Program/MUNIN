@@ -48,5 +48,5 @@ class MotorClock
 
     inline std::chrono::steady_clock getClock() { return clock; }
     inline long getTimeDifference() { return (now - last).count(); }
-    inline long getDelay() { return delay.count(); }
+    inline std::chrono::microseconds getDelay() { return delay; }
 };

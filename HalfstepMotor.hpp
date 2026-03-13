@@ -32,15 +32,13 @@ class Motor
         int step_sp, last_step, last_step_sp_error, step_sp_error;
         std::atomic<int>& steps;
 
-        std::atomic<bool>& reverse;
-
         std::chrono::microseconds i_sum;
 
         SetpointType sp_type;
 
         MotorClock& clk;
 
-        PID(double P, double I, double D, MotorClock& clock, std::atomic<bool>& reverse, std::atomic<int>& steps, std::chrono::microseconds output_max);
+        PID(double P, double I, double D, MotorClock& clock, std::atomic<int>& steps, std::chrono::microseconds output_max);
 
         std::chrono::microseconds outputP();
         std::chrono::microseconds outputI();
@@ -54,7 +52,7 @@ class Motor
 
     MotorClock m_clk;
 
-    std::atomic<bool> m_driving, m_reverse;
+    std::atomic<bool> m_driving;
     bool m_using_pid;
 
     const unsigned int m_resolution;
@@ -63,9 +61,13 @@ class Motor
     
     int m_microstep_point, m_revs, m_step_setpoint;
 
-    gpiod::line::offset m_step_pin, m_dir_pin;
+    //std::vector<std::vector<unsigned int>> m_step_sequence;
+    std::vector<gpiod::line::value_mappings> m_step_sequence;
 
-    gpiod::line_request* m_request;
+    //std::vector<gpiod::line::offset> m_offsets;
+    gpiod::line::offsets m_offsets;
+
+    std::vector<gpiod::line_request> m_mag_requests;
 
     std::chrono::duration<std::chrono::microseconds> m_timer_setpoint;
 
@@ -75,17 +77,16 @@ class Motor
     std::thread m_drive_thread;
 
     void drive_thread_func();
-    void stepHigh();
-    void stepLow();
 
     public:
 
     /*
     @param step_resolution The number of microsteps that create a full revolution. Turn degrees / 360
+    @param gpio_pins a vector of the gpio_pins that connect to the motor magnets. First -> Top. Next -> Right. Next -> Bottom. Last -> Left.
     @param PWM The delay between each microstep. Guides how fast the motor will move.
     @param gpio_chip_path The file directory path of the GPIO chip used to control the gpio pins. Can take a string.
     */
-    Motor(const unsigned int step_resolution, const gpiod::line::offset step_pin, const gpiod::line::offset dir_pin, const std::chrono::microseconds PWM,
+    Motor(const unsigned int step_resolution, const std::vector<unsigned int> gpio_pins, const std::chrono::microseconds PWM,
         std::filesystem::path gpio_chip_path);
 
     /*
