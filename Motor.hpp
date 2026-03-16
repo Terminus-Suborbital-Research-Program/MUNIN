@@ -9,6 +9,8 @@
 
 #include "MotorClock.hpp"
 
+//External dependency: libgpiod w/ C++ bindings
+
 /*
 Motor class
 
@@ -182,7 +184,7 @@ public:
     void stop();
 
     // Configuration methods
-    
+
     void setSetpointType(SetpointType type);
     void setStepSetpoint(int steps, bool set_type = false);
     void setRevSetpoint(int revs, bool set_type = false);
