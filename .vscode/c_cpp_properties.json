@@ -3,9 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/home/logan-r/Dev/CppProjects/PiStepperMotor/iceoryx2/iceoryx/build/install/prefix",
-                "/usr/local/include/iceoryx/v"
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/lib/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -122,9 +122,6 @@ private:
     // Active GPIO request controlling the lines
     gpiod::line_request* m_request;
 
-    // Timer setpoint duration
-    std::chrono::duration<std::chrono::microseconds> m_timer_setpoint;
-
     // Active setpoint type
     SetpointType m_setpoint_type;
 

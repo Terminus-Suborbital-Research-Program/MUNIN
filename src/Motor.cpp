@@ -19,7 +19,6 @@ Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_
     , m_microsteps(0)                 // Total steps executed since start
     , m_step_setpoint(0)
     , m_setpoint_type(Motor::SetpointType::kNONE)
-    , m_timer_setpoint(0us)
     , m_step_pin(step_pin)            // STEP signal GPIO
     , m_dir_pin(dir_pin)              // DIR signal GPIO
     , m_reverse(false)                // Direction flag (false = forward)
