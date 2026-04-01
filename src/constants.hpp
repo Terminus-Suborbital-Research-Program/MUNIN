@@ -13,7 +13,7 @@ namespace constants
 
     const unsigned int MICROSTEPS_PER_REV = 200;
     const unsigned int STEP_PIN = 0;
-    const unsigned int DIR_PIN = 0;
+    const unsigned int DIR_PIN = 1;
     const std::chrono::microseconds INIT_PWM_DELAY = std::chrono::microseconds(50);
 
     // const int STEP_SEQUENCE[8][4] = {
