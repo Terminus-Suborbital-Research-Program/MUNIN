@@ -198,6 +198,11 @@ public:
     bool atSetpoint();
 
     /*
+    Returns the step counter value.
+    */
+    int getSteps();
+
+    /*
     Returns a copy of the current MotorClock.
     */
     MotorClock getCurrentClock();

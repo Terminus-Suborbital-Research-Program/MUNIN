@@ -238,6 +238,14 @@ bool Motor::atSetpoint()
 }
 
 /*
+ Returns the step counter value.
+*/
+int Motor::getSteps()
+{
+    return m_microsteps;
+}
+
+/*
 Enable or disable PID control.
 */
 void Motor::usePID(bool state)
