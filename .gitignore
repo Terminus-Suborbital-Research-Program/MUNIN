@@ -3,8 +3,8 @@ iceoryx2/
 
 
 #Makefile outputs. I'll clean it up later
-main.d
-main.o
+src/main.d
+src/main.o
 
-motor.d
-motor.o
+src/motor.d
+src/motor.o
