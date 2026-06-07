@@ -332,12 +332,14 @@ Start the drive thread if it is not already running.
 */
 void Motor::drive()
 {
-    if (m_drive_thread.joinable())
-        return;
+    // if (m_drive_thread.joinable())
+    //     return;
 
     m_driving = true;
 
-    m_drive_thread = std::thread(&Motor::drive_thread_func, this);
+   // m_drive_thread = std::thread(&Motor::drive_thread_func, this);
+
+   drive_thread_func();
 }
 
 /*
