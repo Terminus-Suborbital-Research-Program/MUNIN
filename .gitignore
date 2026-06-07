@@ -1,12 +1,4 @@
 libgpiod-2.2/
 iceoryx2/
 
-
-#Makefile outputs. I'll clean it up later
-main.d
-main.o
-
-motor.d
-motor.o
-
-main
+outputs/

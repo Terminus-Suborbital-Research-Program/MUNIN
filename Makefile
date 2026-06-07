@@ -1,28 +1,40 @@
 CXX = g++
-CXXFLAGS = -Wall -g -Iinclude
+CXXFLAGS = -Wall -g -Iinclude -MMD -MP
 LDFLAGS = -lgpiodcxx
 
-TARGET = main
+OUTDIR = outputs
+BUILDDIR = $(OUTDIR)/build
 
-# All source files
+TARGET = $(OUTDIR)/main
+
+# Source files
 SRC = $(wildcard src/*.cpp)
 
-# Object files (build/ keeps things clean)
-OBJ = $(SRC:src/%.cpp=build/%.o)
+# Object files
+OBJ = $(SRC:src/%.cpp=$(BUILDDIR)/%.o)
+
+# Dependency files
+DEP = $(OBJ:.o=.d)
 
 all: $(TARGET)
 
-# Link step
+# Link
 $(TARGET): $(OBJ)
-	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
+	mkdir -p $(OUTDIR)
+	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
 
-# Compile step
-build/%.o: src/%.cpp
-	mkdir -p build
+# Compile
+$(BUILDDIR)/%.o: src/%.cpp
+	mkdir -p $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Include auto-generated dependencies
+-include $(DEP)
+
 clean:
-	rm -rf build $(TARGET)
+	rm -rf $(OUTDIR)
 
 run: all
 	./$(TARGET)
+
+.PHONY: all clean run
