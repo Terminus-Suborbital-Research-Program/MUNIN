@@ -332,6 +332,7 @@ Start the drive thread if it is not already running.
 */
 void Motor::drive()
 {
+<<<<<<< HEAD
     if (m_using_pid)
     {
         /*
@@ -364,6 +365,16 @@ void Motor::drive()
             stepLow();
         }
     }
+=======
+    // if (m_drive_thread.joinable())
+    //     return;
+
+    m_driving = true;
+
+   // m_drive_thread = std::thread(&Motor::drive_thread_func, this);
+
+   drive_thread_func();
+>>>>>>> c02bbd4 (Converted the .drive() method to work off of the main thread rather than branching to a new one)
 }
 
 /*
