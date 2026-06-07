@@ -160,7 +160,7 @@ public:
     Motor(const unsigned int step_resolution,
           const gpiod::line::offset step_pin,
           const gpiod::line::offset dir_pin,
-          const std::chrono::microseconds PWM,
+          const std::chrono::microseconds active_period,
           std::filesystem::path gpio_chip_path);
 
     /*
@@ -186,8 +186,8 @@ public:
     void setStepSetpoint(int steps, bool set_type = false);
     void setRevSetpoint(int revs, bool set_type = false);
     void setTimerSetpoint(std::chrono::microseconds time_delay, bool set_type = false);
-    void setPWM(std::chrono::microseconds PWM);
-    void setPID(double P, double I, double D, std::chrono::microseconds output_max);
+    void setPWM(std::chrono::microseconds active_period);
+    void setPID(double P, double I, double D, std::chrono::microseconds output_max_active_period);
 
     // Enable or disable PID control
     void usePID(bool state);

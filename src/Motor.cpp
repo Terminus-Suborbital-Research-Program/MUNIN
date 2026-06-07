@@ -8,7 +8,7 @@ Constructor
 Initializes the Motor object, sets up GPIO control for the STEP and DIR pins,
 and prepares the internal timing and PID controller used to drive the motor.
 */
-Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_pin, const gpiod::line::offset dir_pin, const std::chrono::microseconds PWM,
+Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_pin, const gpiod::line::offset dir_pin, const std::chrono::microseconds active_period,
         std::filesystem::path gpio_chip_path)
     : m_chip(gpio_chip_path)          // Open the specified GPIO chip (e.g., /dev/gpiochip0)
     , m_driving(false)                // Drive thread initially inactive
@@ -22,7 +22,7 @@ Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_
     , m_step_pin(step_pin)            // STEP signal GPIO
     , m_dir_pin(dir_pin)              // DIR signal GPIO
     , m_reverse(false)                // Direction flag (false = forward)
-    , m_clk(PWM)                      // MotorClock controlling delay between steps
+    , m_clk(active_period)                      // MotorClock controlling delay between steps
     , m_pid(0.0, 0.0, 0.0, m_clk, m_reverse, m_microsteps, 0us)
     , m_drive_thread()
 {
@@ -76,7 +76,7 @@ PID Constructor
 
 Initializes the PID controller used to dynamically adjust step timing.
 */
-Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<bool>& reverse, std::atomic<int>& steps, std::chrono::microseconds output_max)
+Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<bool>& reverse, std::atomic<int>& steps, std::chrono::microseconds output_max_active_period)
 : P_constant(P)
 , I_constant(I)
 , D_constant(D)
@@ -396,18 +396,18 @@ void Motor::setTimerSetpoint(std::chrono::microseconds time_delay, bool set_type
 /*
 Directly set the step delay (used when PID is disabled).
 */
-void Motor::setPWM(std::chrono::microseconds PWM)
+void Motor::setPWM(std::chrono::microseconds active_period)
 {
-    m_clk.setDelay(PWM);
+    m_clk.setDelay(active_period);
 }
 
 /*
 Configure PID constants and output limits.
 */
-void Motor::setPID(double P, double I, double D, std::chrono::microseconds output_max)
+void Motor::setPID(double P, double I, double D, std::chrono::microseconds output_max_active_period)
 {
     m_pid.P_constant = P;
     m_pid.I_constant = I;
     m_pid.D_constant = D;
-    m_pid.output_max = output_max;
+    m_pid.output_max = output_max_active_period;
 }
