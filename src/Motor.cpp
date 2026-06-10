@@ -58,13 +58,13 @@ Failing to do this can leave the lines locked by the process.
 */
 Motor::~Motor()
 {
-    m_driving = false;
+    //m_driving = false;
 
     // Ensure the worker thread has terminated before destroying resources
-    if (m_drive_thread.joinable())
-    {
-        m_drive_thread.join();
-    }
+    // if (m_drive_thread.joinable())
+    // {
+    //     m_drive_thread.join();
+    // }
 
     // Release GPIO control
     m_request->release();
@@ -286,69 +286,93 @@ Drive thread loop.
 Continuously generates step pulses while m_driving is true.
 Behavior depends on whether PID control is enabled.
 */
-void Motor::drive_thread_func()
-{
-    while (m_driving)
-    {
-        if (m_using_pid)
-        {
-            /*
-            PID Mode
+// void Motor::drive_thread_func()
+// {
+//     while (m_driving)
+//     {
+//         if (m_using_pid)
+//         {
+//             /*
+//             PID Mode
 
-            Motor speed dynamically adjusts based on PID output.
-            */
+//             Motor speed dynamically adjusts based on PID output.
+//             */
 
-            if (atSetpoint())
-            {
-                // Stop stepping when the target condition is reached
-                stepLow();
+//             if (atSetpoint())
+//             {
+//                 // Stop stepping when the target condition is reached
+//                 stepLow();
 
-                // Reset to a safe idle delay
-                m_clk.setDelay(200us);
-            }
-            else
-            {
-                // Update step timing based on PID output
-                m_clk.setDelay(m_pid.calculate());
-            }
-        }
-        else
-        {
-            /*
-            Simple PWM Mode
+//                 // Reset to a safe idle delay
+//                 m_clk.setDelay(200us);
+//             }
+//             else
+//             {
+//                 // Update step timing based on PID output
+//                 m_clk.setDelay(m_pid.calculate());
+//             }
+//         }
+//         else
+//         {
+//             /*
+//             Simple PWM Mode
 
-            Step pulses are generated at a constant rate defined by m_clk.
-            */
+//             Step pulses are generated at a constant rate defined by m_clk.
+//             */
 
-            stepHigh();
-            std::this_thread::sleep_for(m_clk.getDelay());
-            stepLow();
-        }
-    }
-}
+//             stepHigh();
+//             std::this_thread::sleep_for(m_clk.getDelay());
+//             stepLow();
+//         }
+//     }
+// }
 
 /*
 Start the drive thread if it is not already running.
 */
 void Motor::drive()
 {
-    // if (m_drive_thread.joinable())
-    //     return;
-
-    m_driving = true;
-
-   // m_drive_thread = std::thread(&Motor::drive_thread_func, this);
-
-   drive_thread_func();
+    if (m_using_pid)
+    {
+        /*
+        PID Mode
+        Motor speed dynamically adjusts based on PID output.
+        */
+        if (atSetpoint())
+        {
+            // Stop stepping when the target condition is reached
+            stepLow();
+            // Reset to a safe idle delay
+            m_clk.setDelay(200us);
+        }
+        else
+        {
+            // Update step timing based on PID output
+            m_clk.setDelay(m_pid.calculate());
+        }
+    }
+    else
+    {
+        /*
+        Simple PWM Mode
+        Step pulses are generated at a constant rate defined by m_clk.
+        */
+        stepHigh();
+        
+        if (m_clk.pastDelay())
+        {
+            stepLow();
+        }
+    }
 }
 
 /*
 Signal the drive thread to stop.
 */
-void Motor::stop()
-{
-    m_driving = false;
-}
+// void Motor::stop()
+// {
+//     m_driving = false;
+// }
 
 /*
 Set the type of setpoint used by both the motor and the PID controller.
