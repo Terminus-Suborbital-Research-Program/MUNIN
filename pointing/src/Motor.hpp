@@ -206,4 +206,10 @@ public:
     Returns a copy of the current MotorClock.
     */
     MotorClock getCurrentClock();
+
+    /*
+    Returns the motor's current setpoint type
+    */
+    SetpointType getSetpointType();
+    
 };
