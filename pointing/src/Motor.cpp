@@ -435,3 +435,12 @@ void Motor::setPID(double P, double I, double D, std::chrono::microseconds outpu
     m_pid.D_constant = D;
     m_pid.output_max = output_max_active_period;
 }
+
+/*
+Returns the motor's current setpoint type
+*/
+Motor::SetpointType Motor::getSetpointType()
+{
+    return m_setpoint_type;
+}
+    
