@@ -29,7 +29,7 @@ int main()
     }
 
     motor.~Motor();
-    unlink(SOCKET_PATH);
+    //unlink(SOCKET_PATH);
 }
 
 void MoveData::readData(std::string input_data)
