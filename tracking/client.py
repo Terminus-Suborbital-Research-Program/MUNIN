@@ -1,6 +1,5 @@
 import socket
 import os 
-import astropy
 
 SOCKET_PATH = "/tmp/munin.sock"
 

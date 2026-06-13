@@ -24,7 +24,7 @@
     {
       devShells = forEachSupportedSystem (
         { pkgs, system }:
-        let 
+        let
           #pythonEnv = {
           #  pkgs.python313Packages.astropy
           #  pkgs.python313Packages.numpy
@@ -34,13 +34,18 @@
           default = pkgs.mkShell {
             buildInputs = [
               pkgs.python313
-              pkgs.python313Packages.astropy
+              #pkgs.python313Packages.astropy
+              pkgs.python313Packages.pip
+              pkgs.python313Packages.virtualenv
               pkgs.gnumake
               pkgs.gcc
               pkgs.pkg-config
-              pkgs.virtualenv
             ];
+            shellHook = ''python3 -m venv .venv
+                         source .venv/bin/activate
+                         pip install -r requirements.txt'';
           };
+
         }
       );
     };
