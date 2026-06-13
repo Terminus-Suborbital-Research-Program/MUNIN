@@ -17,16 +17,20 @@ struct MoveData
 
 int main()
 {
-    //Motor motor(constants::MICROSTEPS_PER_REV, constants::STEP_PIN, constants::DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
+    MoveData data;
 
-    //SocketListener listener(constants::SOCKET_PATH);
-    
-    // while (motor.getSteps() != 2000 || !motor.atSetpoint())
-    // {
-    //     std::cout << motor.getSteps() << "\n\r";
+    Motor motor(constants::MICROSTEPS_PER_REV, constants::STEP_PIN, constants::DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
-    //     motor.drive();
-    // }
+    SocketListener listener(constants::SOCKET_PATH);
+
+    listener.attemptConnection();
+
+    while (true)
+    {
+        data.readData(listener.fetchData());
+
+        moveToAngle(motor, data.azimuth);
+    }
 }
 
 void MoveData::readData(std::string input_data)
@@ -37,7 +41,7 @@ void MoveData::readData(std::string input_data)
 
 }
 
-void moveToAngle(Motor motor, float degrees)
+void moveToAngle(Motor &motor, float degrees)
 {
     if (motor.getSetpointType() != Motor::SetpointType::kSTEP)
     {
