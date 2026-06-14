@@ -360,18 +360,21 @@ void Motor::drive()
         }
     }
 
+    if (!m_clk.pastDelay())
+    {
+        return;
+    }
+    
     stepHigh();
     std::cout << "\nstepHigh()!\n\r";
 
-    if (m_clk.pastDelay())
-    {
-        stepLow();
+    std::this_thread::sleep_for(10us);
 
-        m_microsteps++;
-        m_revs = m_microsteps / m_resolution;
+    stepLow();
+    std::cout << "\nstepLow()!\n\r";
 
-        std::cout << "\nstepLow()!\n\r";
-    }
+    m_microsteps++;
+    m_revs = m_microsteps / m_resolution;
 }
 
 /*
