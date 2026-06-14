@@ -366,6 +366,10 @@ void Motor::drive()
     if (m_clk.pastDelay())
     {
         stepLow();
+
+        m_microsteps++;
+        m_revs = m_microsteps / m_resolution;
+
         std::cout << "\nstepLow()!\n\r";
     }
 }
