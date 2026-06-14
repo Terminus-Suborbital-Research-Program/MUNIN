@@ -358,12 +358,10 @@ void Motor::drive()
         Step pulses are generated at a constant rate defined by m_clk.
         */
         stepHigh();
-        std::cout << "\nstepHigh() completed\n\r";
         
         if (m_clk.pastDelay())
         {
             stepLow();
-            std::cout << "\nstepLow() completed\n\r";
         }
     }
 }
