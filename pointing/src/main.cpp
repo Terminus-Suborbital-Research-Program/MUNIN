@@ -40,9 +40,9 @@ int main()
 
     while (azimuth_motor.getSteps() < 2000)
     {
-        std::cout << "\nUnder 2000 steps\n\r";
+        //std::cout << "\nUnder 2000 steps\n\r";
         azimuth_motor.drive();
-        std::cout << "\nDrive function completed\n\r";
+        //std::cout << "\nDrive function completed\n\r";
     }
 }
 
