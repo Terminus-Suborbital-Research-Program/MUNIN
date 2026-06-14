@@ -444,3 +444,11 @@ Motor::SetpointType Motor::getSetpointType()
     return m_setpoint_type;
 }
     
+/*
+Sets the internal step counter to a given value. 
+By default sets it to 0 in order to effectively reset the step counter.
+*/
+void Motor::setSteps(int steps)
+{
+    m_microsteps = steps;
+}

@@ -193,6 +193,12 @@ public:
     void usePID(bool state);
 
     /*
+    Sets the internal step counter to a given value. 
+    By default sets it to 0 in order to effectively reset the step counter.
+    */
+    void setSteps(int steps = 0);
+
+    /*
     Returns true when the configured setpoint condition has been reached.
     */
     bool atSetpoint();

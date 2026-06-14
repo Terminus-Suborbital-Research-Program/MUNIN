@@ -6,11 +6,15 @@ class MoveData
 
   float azimuth, elevation;
 
+  float accelerometer_x, accelerometer_y, accelerometer_z;
+  float magnetometer_x, magnetometer_y, magnetometer_z;
+  float gyro_x, gyro_y, gyro_z;
+
   /*
-  Returns false if the data string fails to parse into 2 floats.
-  Format: "FLOAT FLOAT"
+  Returns false if the data string fails to parse each floatt.
+  Format: "FLOAT FLOAT FLOAT ... FLOAT"
   */
-  bool read(String data);
+  void read(String data);
 };
 
 TicI2C tic;
@@ -64,37 +68,62 @@ void loop()
     }
 }
 
-bool MoveData::read(String input_data)
+void MoveData::read(String input_data)
 {
-  String a = "";
-  String e = "";
+  String val;
 
-  bool a_entered = false;
+  int i = 0;
+
+  float* data_arr[11] = { 
+    &azimuth, &elevation,
+    &accelerometer_x, &accelerometer_y, &accelerometer_z,
+    &magnetometer_x, &magnetometer_y, &magnetometer_z,
+    &gyro_x, &gyro_y, &gyro_z
+  };
 
   for (char c : input_data)
   {
-    if (c != ' ' && a_entered == false)
+    if (c != ' ')
     {
-      a += c;
-    }
-    else if (c == ' ' && a_entered == false)
-    {
-      a_entered = true;
-    }
-    else if (c != ' ' && a_entered == true)
-    {
-      e += c;
+      val += c;
     }
     else
     {
-      return false;
+      data_arr[i] = val.toFloat();
+      val = "";
+      i++;
     }
   }
+  
+  // String a = "";
+  // String e = "";
 
-  this->azimuth = a.toFloat();
-  this->elevation = e.toFloat();
+  // bool a_entered = false;
 
-  return true;
+  // for (char c : input_data)
+  // {
+  //   if (c != ' ' && a_entered == false)
+  //   {
+  //     a += c;
+  //   }
+  //   else if (c == ' ' && a_entered == false)
+  //   {
+  //     a_entered = true;
+  //   }
+  //   else if (c != ' ' && a_entered == true)
+  //   {
+  //     e += c;
+  //   }
+  //   else
+  //   {
+  //     return false;
+  //   }
+  // }
+
+  // this->azimuth = a.toFloat();
+  // this->elevation = e.toFloat();
+
+  // return true;
 }
 
 
