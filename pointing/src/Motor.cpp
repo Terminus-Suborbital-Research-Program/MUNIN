@@ -35,6 +35,7 @@ Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_
     gpiod::line_settings settings;
     settings.set_direction(gpiod::line::direction::OUTPUT);  // Configure lines as outputs
     settings.set_output_value(gpiod::line::value::INACTIVE); // Default LOW
+    settings.set_active_low(false);
 
     gpiod::line_config config;
 
@@ -99,6 +100,7 @@ Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<boo
 {
     // Initialize time references
     now_time = last_time = clk.getClock().now();
+
 }
 
 /*
@@ -366,13 +368,13 @@ void Motor::drive()
         return;
     }
     
-    stepLow();
-    std::cout << "\nstepLow()!\n\r";
+    stepHigh();
+    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     std::this_thread::sleep_for(10us);
 
-    stepHigh();
-    std::cout << "\nstepHigh()!\n\r";
+    stepLow();
+    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     m_microsteps++;
     m_revs = m_microsteps / m_resolution;
