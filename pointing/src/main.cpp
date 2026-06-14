@@ -42,7 +42,7 @@ int main()
     azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
     azimuth_motor.usePID(true);
 
-    while (!azimuth_motor.atSetpoint())
+    while (true)
     {
         azimuth_motor.drive();
     }
