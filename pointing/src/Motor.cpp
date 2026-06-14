@@ -362,6 +362,9 @@ void Motor::drive()
         if (m_clk.pastDelay())
         {
             stepLow();
+
+            m_microsteps++;
+            m_revs += int(m_microsteps / m_resolution);
         }
     }
 }
