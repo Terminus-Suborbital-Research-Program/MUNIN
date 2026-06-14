@@ -28,13 +28,16 @@ int main()
 
         while (true)
         {
-            std::cout << "HIGH\n";
             request.set_value(18, gpiod::line::value::ACTIVE);
             std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::cout << "\n" << request.get_value(gpiod::line::offset(18));
 
             std::cout << "LOW\n";
             request.set_value(18, gpiod::line::value::INACTIVE);
             std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::cout << "\n" << request.get_value(gpiod::line::offset(18)) << "\n";
         }
     }
     catch (const std::exception& e)
