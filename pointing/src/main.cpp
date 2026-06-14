@@ -44,6 +44,8 @@ int main()
         azimuth_motor.drive();
         //std::cout << "\nDrive function completed\n\r";
     }
+
+    delete constants::SOCKET_PATH;
 }
 
 void MoveData::readData(std::string input_data)
