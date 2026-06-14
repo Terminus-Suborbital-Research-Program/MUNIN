@@ -44,7 +44,7 @@ int main()
 
     azimuth_motor.setStepSetpoint(2000);
 
-    while (true)
+    while (!azimuth_motor.atSetpoint())
     {
         azimuth_motor.drive();
     }
