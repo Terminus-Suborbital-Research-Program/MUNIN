@@ -366,13 +366,13 @@ void Motor::drive()
         return;
     }
     
-    stepHigh();
-    std::cout << "\nstepHigh()!\n\r";
+    stepLow();
+    std::cout << "\nstepLow()!\n\r";
 
     std::this_thread::sleep_for(10us);
 
-    stepLow();
-    std::cout << "\nstepLow()!\n\r";
+    stepHigh();
+    std::cout << "\nstepHigh()!\n\r";
 
     m_microsteps++;
     m_revs = m_microsteps / m_resolution;
