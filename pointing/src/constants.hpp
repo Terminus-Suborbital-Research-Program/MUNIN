@@ -10,10 +10,10 @@ namespace constants
 
     const unsigned int MICROSTEPS_PER_REV = 200;
 
-    const unsigned int AZIMUTH_STEP_PIN = 18;
+    const unsigned int AZIMUTH_STEP_PIN = 17;
     const unsigned int AZIMUTH_DIR_PIN = 23;
 
-    const unsigned int ELEVATION_STEP_PIN = 17;
+    const unsigned int ELEVATION_STEP_PIN = 18;
     const unsigned int ELEVATION_DIR_PIN = 22;
 
     const std::chrono::microseconds INIT_PWM_DELAY = std::chrono::microseconds(50);
