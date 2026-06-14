@@ -95,35 +95,6 @@ void MoveData::read(String input_data)
     }
   }
   
-  // String a = "";
-  // String e = "";
-
-  // bool a_entered = false;
-
-  // for (char c : input_data)
-  // {
-  //   if (c != ' ' && a_entered == false)
-  //   {
-  //     a += c;
-  //   }
-  //   else if (c == ' ' && a_entered == false)
-  //   {
-  //     a_entered = true;
-  //   }
-  //   else if (c != ' ' && a_entered == true)
-  //   {
-  //     e += c;
-  //   }
-  //   else
-  //   {
-  //     return false;
-  //   }
-  // }
-
-  // this->azimuth = a.toFloat();
-  // this->elevation = e.toFloat();
-
-  // return true;
 }
 
 
