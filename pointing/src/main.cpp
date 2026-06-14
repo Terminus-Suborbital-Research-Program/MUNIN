@@ -20,21 +20,29 @@ struct MoveData
 
 int main()
 {
-    MoveData data;
+    //MoveData data;
 
     Motor azimuth_motor(constants::MICROSTEPS_PER_REV, constants::AZIMUTH_STEP_PIN, constants::AZIMUTH_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
-    Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
+    //Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
-    SocketListener listener(constants::SOCKET_PATH);
+    //SocketListener listener(constants::SOCKET_PATH);
 
-    listener.attemptConnection();
 
-    while (true)
+    //listener.attemptConnection();
+
+    // while (true)
+    // {
+    //     //data.readData(listener.fetchData());
+
+    //     //moveToAngle(azimuth_motor, 20);
+    //     //moveToAngle(elevation_motor, data.elevation);
+    // }
+
+    while (azimuth_motor.getSteps() < 2000)
     {
-        data.readData(listener.fetchData());
-
-        moveToAngle(azimuth_motor, data.azimuth);
-        moveToAngle(elevation_motor, data.elevation);
+        std::cout << "\nUnder 2000 steps\n\r";
+        azimuth_motor.drive();
+        std::cout << "\nDrive function completed\n\r";
     }
 }
 
