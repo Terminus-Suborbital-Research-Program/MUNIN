@@ -13,7 +13,7 @@ int main()
         // Configure GPIO18 as an output
         gpiod::line_settings settings;
         settings.set_direction(gpiod::line::direction::OUTPUT);
-        settings.set_output_value(gpiod::line::value::INACTIVE);
+        settings.set_output_value(gpiod::line::value::ACTIVE);
 
         gpiod::line_config config;
         config.add_line_settings({gpiod::line::offset(18)}, settings);
