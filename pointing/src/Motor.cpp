@@ -367,14 +367,14 @@ void Motor::drive()
     {
         return;
     }
-
-    stepLow();
-    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
     
     stepHigh();
     std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     std::this_thread::sleep_for(10us);
+
+    stepLow();
+    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     m_microsteps++;
     m_revs = m_microsteps / m_resolution;

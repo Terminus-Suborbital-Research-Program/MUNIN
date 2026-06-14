@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "Motor.hpp"
 #include "constants.hpp"
@@ -14,6 +15,7 @@ struct MoveData
     float accelerometer_x, accelerometer_y, accelerometer_z;
     float magnetometer_x, magnetometer_y, magnetometer_z;
     float gyro_x, gyro_y, gyro_z;
+    float latitude, longitude;
 
     void readData(std::string input_data);
 };
@@ -60,7 +62,21 @@ void MoveData::readData(std::string input_data)
     data >> this->accelerometer_x >> this->accelerometer_y >> this->accelerometer_z;
     data >> this->magnetometer_x >> this->magnetometer_y >> this->magnetometer_z;
     data >> this->gyro_x >> this->gyro_y >> this->gyro_z;
+    data >> this->latitude >> this->longitude;
 
+}
+
+float stepsToDegrees(int steps)
+{
+    return float(steps) / 128.0;
+}
+
+int degreesToSteps(float degrees)
+{
+    int steps = int(degrees * 128.0);
+    steps -= steps/575;
+
+    return steps;
 }
 
 void moveToAngle(Motor &motor, float degrees)
@@ -70,22 +86,19 @@ void moveToAngle(Motor &motor, float degrees)
         motor.setSetpointType(Motor::SetpointType::kSTEP);
     }
 
-    int steps = int(degrees * 128.0);
+    int steps = degreesToSteps(degrees);
 
-    steps -= steps/575;
-
-    float current_deg = float(motor.getSteps()) / 128.0;
+    float current_deg = stepsToDegrees(motor.getSteps());
 
     float forward_turn_error = 360.0 + degrees - current_deg;
     float backward_turn_error = current_deg - degrees;
 
     if (forward_turn_error < backward_turn_error)
     {
-        int new_steps = int((360.0 + degrees) * 128.0);
-        new_steps -= new_steps/575;
+        int new_steps = degreesToSteps(360.0 + degrees);
 
         motor.setStepSetpoint(new_steps);
-        motor.setSteps(int((current_deg - degrees) * 128.0));
+        motor.setSteps(degreesToSteps(current_deg - degrees));
     }
     else
     {
@@ -93,5 +106,42 @@ void moveToAngle(Motor &motor, float degrees)
     }
 
     //Error will still accumulate for many, small increments.
-    //Backsteps are only calculate for the given degrees.
+    //Backsteps are only calculated for the given degrees.
+}
+
+void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees)
+{
+    float mag_north_deg_2d = 180.0 * atan2(data.magnetometer_y, data.magnetometer_x) / 3.14159265359;
+    float true_north = mag_north_deg_2d + mag_declination_east_degrees;
+
+    Motor::SetpointType og_type = azimuth_motor.getSetpointType();
+
+    azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
+    azimuth_motor.setStepSetpoint(degreesToSteps(true_north));
+    
+    while (!azimuth_motor.atSetpoint())
+    {
+        azimuth_motor.drive();
+    }
+
+    azimuth_motor.setSteps();    
+    azimuth_motor.setSetpointType(og_type);
+
+}
+
+void calibrateElevation(Motor& elevation_motor, MoveData data)
+{
+    Motor::SetpointType og_type = elevation_motor.getSetpointType();
+
+    elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
+    elevation_motor.setStepSetpoint(degreesToSteps(180.0 * data.gyro_y / 3.14159265359));
+    
+    while (!elevation_motor.atSetpoint())
+    {
+        elevation_motor.drive();
+    }
+
+    elevation_motor.setSteps();    
+    elevation_motor.setSetpointType(og_type);
+
 }
