@@ -338,34 +338,35 @@ void Motor::drive()
         PID Mode
         Motor speed dynamically adjusts based on PID output.
         */
+        std::cout << "\nUsing PID mode in drive()!\n\r";
+
         if (atSetpoint())
         {
             // Stop stepping when the target condition is reached
             stepLow();
+
             // Reset to a safe idle delay
             m_clk.setDelay(200us);
+
+            std::cout << "\nReached setpoint!\n\r";
+
+            return;
         }
         else
         {
             // Update step timing based on PID output
             m_clk.setDelay(m_pid.calculate());
+            std::cout << "\nSet the next PWM delay via PID!\n\r";
         }
     }
-    else
-    {
-        /*
-        Simple PWM Mode
-        Step pulses are generated at a constant rate defined by m_clk.
-        */
-        stepHigh();
-        
-        if (m_clk.pastDelay())
-        {
-            stepLow();
 
-            m_microsteps++;
-            m_revs += int(m_microsteps / m_resolution);
-        }
+    stepHigh();
+    std::cout << "\nstepHigh()!\n\r";
+
+    if (m_clk.pastDelay())
+    {
+        stepLow();
+        std::cout << "\nstepLow()!\n\r";
     }
 }
 

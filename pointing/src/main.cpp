@@ -38,11 +38,13 @@ int main()
     //     //moveToAngle(elevation_motor, data.elevation);
     // }
 
-    while (azimuth_motor.getSteps() < 2000)
+    azimuth_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
+    azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
+    azimuth_motor.usePID(true);
+
+    while (!azimuth_motor.atSetpoint())
     {
-        //std::cout << "\nUnder 2000 steps\n\r";
         azimuth_motor.drive();
-        //std::cout << "\nDrive function completed\n\r";
     }
 
     delete constants::SOCKET_PATH;
