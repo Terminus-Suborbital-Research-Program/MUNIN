@@ -21,25 +21,25 @@ TicI2C tic;
 
 void setup()
 {
-    Serial.begin(9600);
+  Serial.begin(9600);
 
-    // Set up I2C.
-    Wire.begin();
+  // Set up I2C.
+  Wire.begin();
 
-    // Give the Tic some time to start up.
-    delay(20);
+  // Give the Tic some time to start up.
+  delay(20);
 
-    // Set the Tic's current position to 0, so that when we command
-    // it to move later, it will move a predictable amount.
-    tic.haltAndSetPosition(0);
+  // Set the Tic's current position to 0, so that when we command
+  // it to move later, it will move a predictable amount.
+  tic.haltAndSetPosition(0);
 
-    // Tells the Tic that it is OK to start driving the motor.  The
-    // Tic's safe-start feature helps avoid unexpected, accidental
-    // movement of the motor: if an error happens, the Tic will not
-    // drive the motor again until it receives the Exit Safe Start
-    // command.  The safe-start feature can be disbled in the Tic
-    // Control Center.
-    tic.exitSafeStart();
+  // Tells the Tic that it is OK to start driving the motor.  The
+  // Tic's safe-start feature helps avoid unexpected, accidental
+  // movement of the motor: if an error happens, the Tic will not
+  // drive the motor again until it receives the Exit Safe Start
+  // command.  The safe-start feature can be disbled in the Tic
+  // Control Center.
+  tic.exitSafeStart();
 }
 
 
@@ -54,15 +54,15 @@ void loop()
       if (Serial.available() > 0)
       {
 
-          input = Serial.readString().toInt();
+        input = Serial.readString().toInt();
 
-          Serial.print("Input angle (deg): ");
-          Serial.println(input);
+        Serial.print("Input angle (deg): ");
+        Serial.println(input);
 
-          moveToAngle(input);
+        moveToAngle(input);
 
-          Serial.print("Current pos: ");
-          Serial.println(tic.getCurrentPosition());
+        Serial.print("Current pos: ");
+        Serial.println(tic.getCurrentPosition());
 
       }
     }
@@ -89,7 +89,7 @@ void MoveData::read(String input_data)
     }
     else
     {
-      data_arr[i] = val.toFloat();
+      *data_arr[i] = val.toFloat();
       val = "";
       i++;
     }
