@@ -6,9 +6,9 @@ After=network.target
 Type=simple
 ExecStart=/usr/local/bin/munin/pointing
 Restart=on-failure
-RestartSec = 10;
-RestartSteps = 4;
-RestartMaxDelaySec = 160;
+RestartSec=10
+RestartSteps=4
+RestartMaxDelaySec=160
 
 [Install]
 WantedBy=multi-user.target

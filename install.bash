@@ -4,13 +4,14 @@ bin=/usr/local/bin/munin
 
 git checkout release && git pull
 
-cd ./pointing
+#cd ./pointing
 make 
 
 mkdir -p $bin
-cp ./outputs/main $bin/pointing
+#cp ./outputs/main $bin/pointing
+cp ./MUNIN_POINTING $bin/pointing
 
-cd ../
+#cd ../
 cp -r ./tracking $bin/tracking
 
 cp munin-auto-start.service /etc/systemd/system/munin-auto-start.service
