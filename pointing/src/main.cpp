@@ -20,6 +20,13 @@ struct MoveData
     void readData(std::string input_data);
 };
 
+float stepsToDegrees(int steps);
+int degreesToSteps(float degrees);
+
+void moveToAngle(Motor &motor, float degrees);
+void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
+void calibrateElevation(Motor& elevation_motor, MoveData data);
+
 int main()
 {
     //MoveData data;
