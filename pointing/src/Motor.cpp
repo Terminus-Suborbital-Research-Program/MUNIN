@@ -234,7 +234,7 @@ bool Motor::atSetpoint()
             return m_clk.pastTimer();
 
         case SetpointType::kSTEP:
-            return (m_pid.steps <= (m_step_setpoint + 2)) && (m_pid.steps >= (m_step_setpoint - 2));
+            return m_pid.steps == m_step_setpoint;
 
         default:
             return false;
