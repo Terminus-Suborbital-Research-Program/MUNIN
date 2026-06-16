@@ -23,7 +23,7 @@ struct MoveData
 float stepsToDegrees(int steps);
 int degreesToSteps(float degrees);
 
-void moveToAngle(Motor &motor, float degrees);
+void setAngleSetpoint(Motor &motor, float degrees);
 void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
 void calibrateElevation(Motor& elevation_motor, MoveData data);
 
@@ -61,11 +61,13 @@ int main()
     //azimuth_motor.setStepSetpoint(2000);
     //elevation_motor.setStepSetpoint(2000);
 
+    setAngleSetpoint(azimuth_motor, 45);
+
     while (!azimuth_motor.atSetpoint())
     {
 
         //elevation_motor.drive();
-        moveToAngle(azimuth_motor, 45);
+        azimuth_motor.drive();
     }
 }
 
@@ -94,7 +96,7 @@ int degreesToSteps(float degrees)
     return steps;
 }
 
-void moveToAngle(Motor &motor, float degrees)
+void setAngleSetpoint(Motor &motor, float degrees)
 {
     if (motor.getSetpointType() != Motor::SetpointType::kSTEP)
     {
