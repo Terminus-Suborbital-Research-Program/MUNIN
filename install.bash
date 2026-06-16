@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-apt install gnuradio python3.13 virtualenv
+apt install vim gnuradio python3.13 virtualenv gcc make libgpiod3 libgpiod-dev
 
 bin=/usr/local/bin/munin
 
 git checkout release && git pull
 
-#cd ./pointing
+cd ./pointing
 make 
 
 mkdir -p $bin
-#cp ./outputs/main $bin/pointing
-cp ./MUNIN_POINTING $bin/pointing
+cp ./outputs/main $bin/pointing
+#cp ./MUNIN_POINTING $bin/pointing
 
 #cd ../
 cp -r ./tracking $bin/tracking
 
-cp munin-auto-start.service /etc/systemd/system/munin-auto-start.service
+cp munin-auto-tracking.service /etc/systemd/system/munin-auto-tracking.service
+cp munin-auto-pointing.service /etc/systemd/system/munin-auto-pointing.service
+
