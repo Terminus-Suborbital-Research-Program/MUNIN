@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-apt install vim gnuradio python3.13 virtualenv gcc make libgpiod3 libgpiod-dev
+apt install vim python3.13 virtualenv gcc make libgpiod3 libgpiod-dev
 
 bin=/usr/local/bin/munin
 
