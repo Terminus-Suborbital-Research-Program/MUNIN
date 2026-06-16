@@ -1,13 +1,9 @@
 #include <Tic.h>
+//#include <SparkFun_u-blox_GNSS_v3.h>
 
 struct MoveData
 {
   float azimuth, elevation;
-
-  float accelerometer_x, accelerometer_y, accelerometer_z;
-  float magnetometer_x, magnetometer_y, magnetometer_z;
-  float gyro_x, gyro_y, gyro_z;
-  float latitude, longitude;
 
   /*
   Returns false if the data string fails to parse each float.
@@ -16,8 +12,10 @@ struct MoveData
   void read(String data);
 };
 
-TicI2C azimuth_motor;
-TicI2C elevation_motor;
+//SFE_UBLOX_GNSS myGNSS;
+
+TicI2C azimuth_motor(2);
+TicI2C elevation_motor(1);
 
 MoveData data;
 
@@ -26,7 +24,10 @@ void setup()
   Serial.begin(9600);
 
   // Set up I2C.
-  Wire.begin();
+  Wire.begin(1);
+  Wire.begin(2);
+
+  //myGNSS.begin();
 
   // Give the Tic some time to start up.
   delay(20);
@@ -45,8 +46,8 @@ void setup()
   azimuth_motor.exitSafeStart();
   elevation_motor.exitSafeStart();
 
-  calibrateAzimuth(azimuth_motor);
-  calibrateElevation(elevation_motor);
+  // calibrateAzimuth(azimuth_motor);
+  // calibrateElevation(elevation_motor);
 }
 
 
@@ -72,12 +73,8 @@ void MoveData::read(String input_data)
 
   int i = 0;
 
-  float* data_arr[13] = { 
+  float* data_arr[2] = { 
     &azimuth, &elevation,
-    &accelerometer_x, &accelerometer_y, &accelerometer_z,
-    &magnetometer_x, &magnetometer_y, &magnetometer_z,
-    &gyro_x, &gyro_y, &gyro_z,
-    &latitude, &longitude
   };
 
   for (char c : input_data)
@@ -100,7 +97,7 @@ void MoveData::read(String input_data)
 // error will happen.  The Tic's default command timeout period
 // is 1000 ms, but it can be changed or disabled in the Tic
 // Control Center.
-void resetCommandTimeout()
+void resetCommandTimeout(TicI2C& tic)
 {
   tic.resetCommandTimeout();
 }
@@ -108,12 +105,12 @@ void resetCommandTimeout()
 // Delays for the specified number of milliseconds while
 // resetting the Tic's command timeout so that its movement does
 // not get interrupted by errors.
-void delayWhileResettingCommandTimeout(uint32_t ms)
+void delayWhileResettingCommandTimeout(TicI2C& tic, uint32_t ms)
 {
   uint32_t start = millis();
   do
   {
-    resetCommandTimeout();
+    resetCommandTimeout(tic);
   } while ((uint32_t)(millis() - start) <= ms);
 }
 
@@ -126,7 +123,7 @@ void waitForPosition(TicI2C& tic, int32_t targetPosition)
 {
   do
   {
-    resetCommandTimeout();
+    resetCommandTimeout(tic);
   } while (tic.getCurrentPosition() != targetPosition);
 }
 
@@ -153,7 +150,7 @@ int degreesToSteps(float degrees)
 
 void moveToAngle(TicI2C& tic, float degrees)
 {
-    int steps = degreeToSteps(degrees);
+    int steps = degreesToSteps(degrees);
 
     float current_deg = stepsToDegrees(tic.getCurrentPosition());
 
@@ -169,24 +166,24 @@ void moveToAngle(TicI2C& tic, float degrees)
     }
     else
     {
-      moveAndDelay(steps);
+      moveAndDelay(tic, steps);
     }
 
     //Error will still accumulate for many, small increments.
     //Backsteps are only calculate for the given degrees.
 }
 
-void calibrateAzimuth(TicI2C& azimuth_motor, MoveData data, float mag_declination_east_degrees)
-{
-    float mag_north_deg_2d = 180.0 * atan2(data.magnetometer_y, data.magnetometer_x) / 3.14159265359;
-    float true_north = mag_north_deg_2d + mag_declination_east_degrees;
+// void calibrateAzimuth(TicI2C& azimuth_motor, MoveData data, float mag_declination_east_degrees)
+// {
+//     float mag_north_deg_2d = 180.0 * atan2(data.magnetometer_y, data.magnetometer_x) / 3.14159265359;
+//     float true_north = mag_north_deg_2d + mag_declination_east_degrees;
 
-    moveToAngle(true_north);
-    azimuth_motor.haltAndSetPosition(0);
-}
+//     moveToAngle(azimuth_motor, true_north);
+//     azimuth_motor.haltAndSetPosition(0);
+// }
 
-void calibrateElevation(TicI2C& elevation_motor, MoveData data)
-{
-    moveToAngle(180.0 * data.gyro_y / 3.14159265359);
-    elevation_motor.haltAndSetPosition(0);
-}
+// void calibrateElevation(TicI2C& elevation_motor, MoveData data)
+// {
+//     moveToAngle(elevation_motor, 180.0 * data.gyro_y / 3.14159265359);
+//     elevation_motor.haltAndSetPosition(0);
+// }
