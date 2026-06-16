@@ -1,3 +1,4 @@
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -7,7 +8,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-const char* SOCKET_PATH = "/tmp/munin.sock";
+//const char* SOCKET_PATH = "/tmp/munin.sock";
 
 class SocketListener {
 public:
@@ -33,7 +34,7 @@ public:
         struct sockaddr_un addr;
         std::memset(&addr, 0, sizeof(addr));
         addr.sun_family = AF_UNIX;
-        std::strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
+        std::strncpy(addr.sun_path, this->sock_path, sizeof(addr.sun_path) - 1);
 
         if (bind(this->server_endpoint, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
             close(this->server_endpoint);
@@ -89,14 +90,3 @@ public:
         }
     }
 };
-
-int main() {
-    errno = 0;
-    SocketListener socket = SocketListener(SOCKET_PATH);
-    socket.attemptConnection();
-    while(true) {
-           std::string d =  socket.fetchData();
-    }
-    
-    return 0;
-}

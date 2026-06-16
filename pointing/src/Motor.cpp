@@ -1,3 +1,4 @@
+
 #include "Motor.hpp"
 
 using namespace std::chrono_literals;
@@ -34,6 +35,7 @@ Motor::Motor(const unsigned int step_resolution, const gpiod::line::offset step_
     gpiod::line_settings settings;
     settings.set_direction(gpiod::line::direction::OUTPUT);  // Configure lines as outputs
     settings.set_output_value(gpiod::line::value::INACTIVE); // Default LOW
+    settings.set_active_low(false);
 
     gpiod::line_config config;
 
@@ -58,13 +60,13 @@ Failing to do this can leave the lines locked by the process.
 */
 Motor::~Motor()
 {
-    m_driving = false;
+    //m_driving = false;
 
     // Ensure the worker thread has terminated before destroying resources
-    if (m_drive_thread.joinable())
-    {
-        m_drive_thread.join();
-    }
+    // if (m_drive_thread.joinable())
+    // {
+    //     m_drive_thread.join();
+    // }
 
     // Release GPIO control
     m_request->release();
@@ -98,6 +100,7 @@ Motor::PID::PID(double P, double I, double D, MotorClock& clock, std::atomic<boo
 {
     // Initialize time references
     now_time = last_time = clk.getClock().now();
+
 }
 
 /*
@@ -286,67 +289,104 @@ Drive thread loop.
 Continuously generates step pulses while m_driving is true.
 Behavior depends on whether PID control is enabled.
 */
-void Motor::drive_thread_func()
-{
-    while (m_driving)
-    {
-        if (m_using_pid)
-        {
-            /*
-            PID Mode
+// void Motor::drive_thread_func()
+// {
+//     while (m_driving)
+//     {
+//         if (m_using_pid)
+//         {
+//             /*
+//             PID Mode
 
-            Motor speed dynamically adjusts based on PID output.
-            */
+//             Motor speed dynamically adjusts based on PID output.
+//             */
 
-            if (atSetpoint())
-            {
-                // Stop stepping when the target condition is reached
-                stepLow();
+//             if (atSetpoint())
+//             {
+//                 // Stop stepping when the target condition is reached
+//                 stepLow();
 
-                // Reset to a safe idle delay
-                m_clk.setDelay(200us);
-            }
-            else
-            {
-                // Update step timing based on PID output
-                m_clk.setDelay(m_pid.calculate());
-            }
-        }
-        else
-        {
-            /*
-            Simple PWM Mode
+//                 // Reset to a safe idle delay
+//                 m_clk.setDelay(200us);
+//             }
+//             else
+//             {
+//                 // Update step timing based on PID output
+//                 m_clk.setDelay(m_pid.calculate());
+//             }
+//         }
+//         else
+//         {
+//             /*
+//             Simple PWM Mode
 
-            Step pulses are generated at a constant rate defined by m_clk.
-            */
+//             Step pulses are generated at a constant rate defined by m_clk.
+//             */
 
-            stepHigh();
-            std::this_thread::sleep_for(m_clk.getDelay());
-            stepLow();
-        }
-    }
-}
+//             stepHigh();
+//             std::this_thread::sleep_for(m_clk.getDelay());
+//             stepLow();
+//         }
+//     }
+// }
 
 /*
 Start the drive thread if it is not already running.
 */
 void Motor::drive()
 {
-    if (m_drive_thread.joinable())
+    if (m_using_pid)
+    {
+        /*
+        PID Mode
+        Motor speed dynamically adjusts based on PID output.
+        */
+        std::cout << "\nUsing PID mode in drive()!\n\r";
+
+        if (atSetpoint())
+        {
+            // Stop stepping when the target condition is reached
+            stepLow();
+
+            // Reset to a safe idle delay
+            m_clk.setDelay(200us);
+
+            std::cout << "\nReached setpoint!\n\r";
+
+            return;
+        }
+        else
+        {
+            // Update step timing based on PID output
+            m_clk.setDelay(m_pid.calculate());
+            std::cout << "\nSet the next PWM delay via PID!\n\r";
+        }
+    }
+
+    if (!m_clk.pastDelay())
+    {
         return;
+    }
+    
+    stepHigh();
+    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
-    m_driving = true;
+    std::this_thread::sleep_for(10us);
 
-    m_drive_thread = std::thread(&Motor::drive_thread_func, this);
+    stepLow();
+    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
+
+    m_microsteps++;
+    m_revs = m_microsteps / m_resolution;
 }
 
 /*
 Signal the drive thread to stop.
 */
-void Motor::stop()
-{
-    m_driving = false;
-}
+// void Motor::stop()
+// {
+//     m_driving = false;
+// }
 
 /*
 Set the type of setpoint used by both the motor and the PID controller.
@@ -418,3 +458,11 @@ Motor::SetpointType Motor::getSetpointType()
     return m_setpoint_type;
 }
     
+/*
+Sets the internal step counter to a given value. 
+By default sets it to 0 in order to effectively reset the step counter.
+*/
+void Motor::setSteps(int steps)
+{
+    m_microsteps = steps;
+}
