@@ -377,7 +377,7 @@ void Motor::drive()
     stepLow();
     std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
-    m_microsteps += -1 * int(m_reverse); //Add steps in the direction of the motor
+    m_microsteps += (m_reverse ? -1.0 : 1.0); //Add steps in the direction of the motor
     m_revs = m_microsteps / m_resolution;
 }
 
