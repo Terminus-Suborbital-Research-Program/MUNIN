@@ -1,6 +1,7 @@
 [Unit]
 Description=Munin auto start tracking
-After=network.target
+After=network.target munin-auto-pointing.service
+Wants=munin-auto-pointing.service
 
 [Service]
 Type=simple

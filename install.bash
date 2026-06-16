@@ -13,9 +13,10 @@ mkdir -p $bin
 cp ./outputs/main $bin/pointing
 #cp ./MUNIN_POINTING $bin/pointing
 
-#cd ../
+cd ../
 cp -r ./tracking $bin/tracking
 
 cp munin-auto-tracking.service /etc/systemd/system/munin-auto-tracking.service
 cp munin-auto-pointing.service /etc/systemd/system/munin-auto-pointing.service
 
+systemctl enable munin-auto-tracking.service munin-auto-pointing.service
