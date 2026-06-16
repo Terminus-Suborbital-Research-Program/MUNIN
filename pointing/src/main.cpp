@@ -52,12 +52,13 @@ int main()
     elevation_motor.usePID(true);
 
     azimuth_motor.setStepSetpoint(2000);
-    azimuth_motor.setStepSetpoint(1000);
+    elevation_motor.setStepSetpoint(2000);
 
     while (!azimuth_motor.atSetpoint())
     {
-        azimuth_motor.drive();
+
         elevation_motor.drive();
+        azimuth_motor.drive();
     }
 }
 
