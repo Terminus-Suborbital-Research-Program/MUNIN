@@ -51,8 +51,8 @@ int main()
     elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
     elevation_motor.usePID(true);
 
-    azimuth_motor.setStepSetpoint(2000);
-    elevation_motor.setStepSetpoint(2000);
+    azimuth_motor.setStepSetpoint(-2000);
+    elevation_motor.setStepSetpoint(-2000);
 
     while (!azimuth_motor.atSetpoint())
     {

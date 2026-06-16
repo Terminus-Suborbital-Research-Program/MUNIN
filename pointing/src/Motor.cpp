@@ -217,6 +217,7 @@ std::chrono::microseconds Motor::PID::calculate()
 
     // Determine motor direction
     reverse = (output < 0us);
+    std::cout << "\n" << output.count();
 
     // Return absolute delay value
     return std::chrono::abs(output);
@@ -233,7 +234,7 @@ bool Motor::atSetpoint()
             return m_clk.pastTimer();
 
         case SetpointType::kSTEP:
-            return (m_microsteps >= m_step_setpoint);
+            return (m_pid.steps <= (m_step_setpoint + 2)) && (m_pid.steps >= (m_step_setpoint - 2));
 
         default:
             return false;
@@ -376,7 +377,7 @@ void Motor::drive()
     stepLow();
     std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
-    m_microsteps++;
+    m_microsteps += -1 * int(m_reverse); //Add steps in the direction of the motor
     m_revs = m_microsteps / m_resolution;
 }
 
@@ -403,6 +404,7 @@ Set a step-count target.
 void Motor::setStepSetpoint(int steps, bool set_type)
 {
     m_step_setpoint = steps;
+    m_pid.step_sp = steps;
 
     if (set_type)
     {
