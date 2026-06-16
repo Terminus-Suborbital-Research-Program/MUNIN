@@ -25,7 +25,7 @@ int main()
     //MoveData data;
 
     Motor azimuth_motor(constants::MICROSTEPS_PER_REV, constants::AZIMUTH_STEP_PIN, constants::AZIMUTH_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
-    //Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
+    Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
     //SocketListener listener(constants::SOCKET_PATH);
 
@@ -47,14 +47,18 @@ int main()
     azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
     azimuth_motor.usePID(true);
 
+    elevation_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
+    elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
+    elevation_motor.usePID(true);
+
     azimuth_motor.setStepSetpoint(2000);
+    azimuth_motor.setStepSetpoint(1000);
 
     while (!azimuth_motor.atSetpoint())
     {
         azimuth_motor.drive();
+        elevation_motor.drive();
     }
-
-    //delete constants::SOCKET_PATH;
 }
 
 void MoveData::readData(std::string input_data)
