@@ -6,10 +6,7 @@ Wants=munin-auto-pointing.service
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/munin/tracking/run.bash
-Restart=on-failure
-RestartSec=10
-RestartSteps=4
-RestartMaxDelaySec=160
+Restart=no
 
 [Install]
 WantedBy=multi-user.target

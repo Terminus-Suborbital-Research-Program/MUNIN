@@ -10,7 +10,7 @@ cd ./pointing
 make 
 
 mkdir -p $bin
-cp ./outputs/main $bin/pointing
+\cp ./outputs/main $bin/pointing
 #cp ./MUNIN_POINTING $bin/pointing
 
 cd ../
