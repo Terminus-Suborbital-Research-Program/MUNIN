@@ -29,14 +29,17 @@ int main()
 
     //SocketListener listener(constants::SOCKET_PATH);
 
-
     //listener.attemptConnection();
+
+    //data.readData(listener.fetchData());
+    //calibrateAzimuth(azimuth_motor, data);
+    //calibrateElevation(elevation_motor, data);
 
     // while (true)
     // {
     //     //data.readData(listener.fetchData());
 
-    //     //moveToAngle(azimuth_motor, 20);
+    //     //moveToAngle(azimuth_motor, data.azimuth);
     //     //moveToAngle(elevation_motor, data.elevation);
     // }
 
