@@ -14,9 +14,11 @@ cp ./outputs/main $bin/pointing
 #cp ./MUNIN_POINTING $bin/pointing
 
 cd ../
-cp -r ./tracking $bin/tracking
+\cp -r ./tracking $bin/tracking
+\cp ./requirements.txt $bin/tracking/requirements.txt
+chmod +x $bin/tracking/run.bash
 
-cp munin-auto-tracking.service /etc/systemd/system/munin-auto-tracking.service
-cp munin-auto-pointing.service /etc/systemd/system/munin-auto-pointing.service
+\cp munin-auto-tracking.service /etc/systemd/system/munin-auto-tracking.service
+\cp munin-auto-pointing.service /etc/systemd/system/munin-auto-pointing.service
 
 systemctl enable munin-auto-tracking.service munin-auto-pointing.service
