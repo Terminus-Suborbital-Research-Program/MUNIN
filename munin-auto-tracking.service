@@ -1,0 +1,14 @@
+[Unit]
+Description=Munin auto start tracking
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/munin/tracking/run.bash
+Restart=on-failure
+RestartSec=10
+RestartSteps=4
+RestartMaxDelaySec=160
+
+[Install]
+WantedBy=multi-user.target

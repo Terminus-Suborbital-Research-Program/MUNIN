@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+apt install gnuradio python3.13 virtualenv
+
 bin=/usr/local/bin/munin
 
 git checkout release && git pull
