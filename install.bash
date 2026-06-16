@@ -17,6 +17,7 @@ cd ../
 \cp -r ./tracking $bin/tracking
 \cp ./requirements.txt $bin/tracking/requirements.txt
 chmod +x $bin/tracking/run.bash
+chmod +x $bin/pointing
 
 \cp munin-auto-tracking.service /etc/systemd/system/munin-auto-tracking.service
 \cp munin-auto-pointing.service /etc/systemd/system/munin-auto-pointing.service

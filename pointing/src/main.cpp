@@ -27,9 +27,9 @@ int main()
     Motor azimuth_motor(constants::MICROSTEPS_PER_REV, constants::AZIMUTH_STEP_PIN, constants::AZIMUTH_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
     Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
-    SocketListener listener(constants::SOCKET_PATH);
+//    SocketListener listener(constants::SOCKET_PATH);
 
-    listener.attemptConnection();
+//    listener.attemptConnection();
 
     //data.readData(listener.fetchData());
     //calibrateAzimuth(azimuth_motor, data);
