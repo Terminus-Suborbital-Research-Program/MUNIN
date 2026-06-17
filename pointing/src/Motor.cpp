@@ -217,7 +217,7 @@ std::chrono::microseconds Motor::PID::calculate()
 
     // Determine motor direction
     reverse = (output < 0us);
-    std::cout << "\n" << output.count();
+    //std::cout << "\n" << output.count();
 
     // Return absolute delay value
     return std::chrono::abs(output);

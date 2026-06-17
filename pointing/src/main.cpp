@@ -9,11 +9,11 @@
 #include "constants.hpp"
 #include "pointing.hpp"
 
-#include "bmm350.h"
-#include "bmi323.h"
-#include "sensor/BMM350_SensorAPI/examples/common/common.h"
+#include "../sensor/BMM350_SensorAPI/bmm350.h"
+#include "../sensor/BMI3XY_SensorAPI/bmi323.h"
+#include "../sensor/BMM350_SensorAPI/examples/common/common.h"
 #undef _COMMON_H
-#include "sensor/BMI3XY_SensorAPI/bmi323_examples/common/common.h"
+#include "../sensor/BMI3XY_SensorAPI/bmi323_examples/common/common.h"
 
 struct MoveData
 {

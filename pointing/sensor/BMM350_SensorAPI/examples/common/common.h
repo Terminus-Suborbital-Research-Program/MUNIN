@@ -43,7 +43,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
-#include "bmm350.h"
+#include "../../bmm350.h"
 
 #define IMU_BUS  10
 // const int IMU_BUS = 10;
