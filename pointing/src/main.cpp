@@ -12,10 +12,6 @@
 struct MoveData
 {
     float azimuth, elevation;
-    float accelerometer_x, accelerometer_y, accelerometer_z;
-    float magnetometer_x, magnetometer_y, magnetometer_z;
-    float gyro_x, gyro_y, gyro_z;
-    float latitude, longitude;
 
     void readData(std::string input_data);
 };
@@ -76,11 +72,6 @@ void MoveData::readData(std::string input_data)
     std::stringstream data(input_data);
 
     data >> this->azimuth >> this->elevation;
-    data >> this->accelerometer_x >> this->accelerometer_y >> this->accelerometer_z;
-    data >> this->magnetometer_x >> this->magnetometer_y >> this->magnetometer_z;
-    data >> this->gyro_x >> this->gyro_y >> this->gyro_z;
-    data >> this->latitude >> this->longitude;
-
 }
 
 float stepsToDegrees(int steps)
