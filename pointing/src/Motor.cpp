@@ -342,7 +342,7 @@ void Motor::drive()
         PID Mode
         Motor speed dynamically adjusts based on PID output.
         */
-        std::cout << "\nUsing PID mode in drive()!\n\r";
+        //std::cout << "\nUsing PID mode in drive()!\n\r";
 
         if (atSetpoint())
         {
@@ -352,7 +352,7 @@ void Motor::drive()
             // Reset to a safe idle delay
             m_clk.setDelay(200us);
 
-            std::cout << "\nReached setpoint!\n\r";
+            //std::cout << "\nReached setpoint!\n\r";
 
             return;
         }
@@ -360,7 +360,7 @@ void Motor::drive()
         {
             // Update step timing based on PID output
             m_clk.setDelay(m_pid.calculate());
-            std::cout << "\nSet the next PWM delay via PID!\n\r";
+            //std::cout << "\nSet the next PWM delay via PID!\n\r";
         }
     }
 
@@ -370,12 +370,12 @@ void Motor::drive()
     }
     
     stepHigh();
-    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
+    //std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     std::this_thread::sleep_for(10us);
 
     stepLow();
-    std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
+    //std::cout << "\n" << m_request->get_value(m_step_pin) << "\n\r";
 
     m_microsteps += (m_reverse ? -1.0 : 1.0); //Add steps in the direction of the motor
     m_revs = m_microsteps / m_resolution;
