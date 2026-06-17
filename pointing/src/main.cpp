@@ -62,11 +62,12 @@ int main()
     //elevation_motor.setStepSetpoint(2000);
 
     setAngleSetpoint(azimuth_motor, 45);
+    setAngleSetpoint(elevation_motor, 45);
 
     while (!azimuth_motor.atSetpoint())
     {
 
-        //elevation_motor.drive();
+        elevation_motor.drive();
         azimuth_motor.drive();
     }
 }
