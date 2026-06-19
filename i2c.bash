@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-TARGET_FILE="/home/ifeatud/tests.conf"
-#TARGET_FILE="/boot/firmware/config.txt"
+
+TARGET_FILE="/boot/firmware/config.txt"
 
 STRING0="dtparam=i2c_arm=on"
 STRING1="i2c_arm_baudrate="
