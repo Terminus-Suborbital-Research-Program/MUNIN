@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-apt install vim python3.13 virtualenv gcc make libgpiod3 libgpiod-dev
+apt install vim python3.13 virtualenv i2c-tools gcc make libgpiod3 libgpiod-dev
+
+chmod +x ./i2c.bash
+
+./i2c.bash
 
 bin=/usr/local/bin/munin
 
