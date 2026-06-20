@@ -143,6 +143,18 @@ void init(bmm350_dev &mag, bmi3_dev &imu, Motor &azimuth_motor, Motor &elevation
     elevation_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
     elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
     elevation_motor.usePID(true);
+
+    //azimuth_motor.setStepSetpoint(2000);
+    //elevation_motor.setStepSetpoint(2000);
+
+    setAngleSetpoint(azimuth_motor, 45);
+    setAngleSetpoint(elevation_motor, 45);
+    while (!azimuth_motor.atSetpoint())
+    {
+
+        elevation_motor.drive();
+        azimuth_motor.drive();
+    }
 }
 
 void MoveData::readData(std::string input_data)
@@ -195,39 +207,39 @@ void setAngleSetpoint(Motor &motor, float degrees)
     //Backsteps are only calculated for the given degrees.
 }
 
-// void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees)
-// {
-//     float mag_north_deg_2d = 180.0 * atan2(data.magnetometer_y, data.magnetometer_x) / 3.14159265359;
-//     float true_north = mag_north_deg_2d + mag_declination_east_degrees;
+//void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees)
+//{
+//    float mag_north_deg_2d = 180.0 * atan2(data.magnetometer_y, data.magnetometer_x) / 3.14159265359;
+//    float true_north = mag_north_deg_2d + mag_declination_east_degrees;
 
-//     Motor::SetpointType og_type = azimuth_motor.getSetpointType();
+//    Motor::SetpointType og_type = azimuth_motor.getSetpointType();
 
-//     azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
-//     azimuth_motor.setStepSetpoint(degreesToSteps(true_north));
+//    azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
+//    azimuth_motor.setStepSetpoint(degreesToSteps(true_north));
     
-//     while (!azimuth_motor.atSetpoint())
-//     {
-//         azimuth_motor.drive();
-//     }
+//    while (!azimuth_motor.atSetpoint())
+//    {
+//        azimuth_motor.drive();
+//    }
 
-//     azimuth_motor.setSteps();    
-//     azimuth_motor.setSetpointType(og_type);
+//    azimuth_motor.setSteps();    
+//    azimuth_motor.setSetpointType(og_type);
 
-// }
+//}
 
-// void calibrateElevation(Motor& elevation_motor, MoveData data)
-// {
-//     Motor::SetpointType og_type = elevation_motor.getSetpointType();
+//void calibrateElevation(Motor& elevation_motor, MoveData data)
+//{
+//    Motor::SetpointType og_type = elevation_motor.getSetpointType();
 
-//     elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
-//     elevation_motor.setStepSetpoint(degreesToSteps(180.0 * data.gyro_y / 3.14159265359));
+//    elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
+//    elevation_motor.setStepSetpoint(degreesToSteps(180.0 * data.gyro_y / 3.14159265359));
     
-//     while (!elevation_motor.atSetpoint())
-//     {
-//         elevation_motor.drive();
-//     }
+//    while (!elevation_motor.atSetpoint())
+//    {
+//        elevation_motor.drive();
+//    }
 
-//     elevation_motor.setSteps();    
-//     elevation_motor.setSetpointType(og_type);
+//    elevation_motor.setSteps();    
+//    elevation_motor.setSetpointType(og_type);
 
-// }
+//}
