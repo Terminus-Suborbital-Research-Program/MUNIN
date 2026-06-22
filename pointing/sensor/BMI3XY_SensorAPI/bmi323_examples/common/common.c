@@ -18,7 +18,7 @@
 #include <i2c/smbus.h>
 #include <sys/ioctl.h>
 
-#include "bmi3.h"
+#include "../../bmi3.h"
 
 
 #define IMU_BUS  10

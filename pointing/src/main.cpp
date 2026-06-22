@@ -5,10 +5,10 @@
 #include <unistd.h>
 #include <math.h>
 
-#include "Motor.hpp"
-#include "constants.hpp"
+
 #include "pointing.hpp"
 
+<<<<<<< HEAD
 #include "../sensor/BMM350_SensorAPI/bmm350.h"
 #include "../sensor/BMI3XY_SensorAPI/bmi323.h"
 #include "../sensor/BMM350_SensorAPI/examples/common/common.h"
@@ -31,14 +31,15 @@ void setAngleSetpoint(Motor &motor, float degrees);
 void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
 void calibrateElevation(Motor& elevation_motor, MoveData data);
 
+=======
+>>>>>>> 09635af (IT BUILDS AND LINKS!!!!)
 int main()
 {
-    /* Create an instance of sensor data structure. */
-    struct bmi3_sensor_data sensor_data[2] = { 0 };
+    bmi3_sensor_data imu_data[2] = { 0 };
+    imu_data[0].type = BMI323_ACCEL;
+    imu_data[1].type = BMI323_GYRO;
 
-    /* Select accel and gyro sensor. */
-    sensor_data[0].type = BMI323_ACCEL;
-    sensor_data[1].type = BMI323_GYRO;
+    bmm350_mag_temp_data mag_data[3] = { 0 };
 
     bmm350_dev mag = { 0 };
     bmi3_dev imu = { 0 };
@@ -70,6 +71,7 @@ int main()
     //     //elevation_motor.drive();
     //     azimuth_motor.drive();
     // }
+<<<<<<< HEAD
 }
 
 void init(bmm350_dev &mag, bmi3_dev &imu, Motor &azimuth_motor, Motor &elevation_motor)
@@ -231,3 +233,6 @@ void setAngleSetpoint(Motor &motor, float degrees)
 //     elevation_motor.setSetpointType(og_type);
 
 // }
+=======
+}
+>>>>>>> 09635af (IT BUILDS AND LINKS!!!!)

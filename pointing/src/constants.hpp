@@ -1,12 +1,14 @@
+#pragma once
+
 #include <filesystem>
 #include <gpiod.hpp>
 #include <chrono>
 
 namespace constants
 {
-    const std::filesystem::path GPIO_CONTROLLER_PATH = "/dev/gpiochip0";
+    inline const char* SOCKET_PATH = "/tmp/munin.sock";
 
-    const char* SOCKET_PATH = "/tmp/munin.sock";
+    const std::filesystem::path GPIO_CONTROLLER_PATH = "/dev/gpiochip0";
 
     const unsigned int MICROSTEPS_PER_REV = 200;
 

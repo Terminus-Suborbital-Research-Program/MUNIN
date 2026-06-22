@@ -48,7 +48,7 @@
 #include <i2c/smbus.h>
 #include <sys/ioctl.h>
 
-#include "bmm350.h"
+#include "../../bmm350.h"
 #include "common.h"
 
 

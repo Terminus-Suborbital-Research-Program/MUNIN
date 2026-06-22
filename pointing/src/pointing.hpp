@@ -8,7 +8,17 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-//const char* SOCKET_PATH = "/tmp/munin.sock";
+#include "Motor.hpp"
+#include "constants.hpp"
+
+extern "C"
+{
+#include "../sensor/BMM350_SensorAPI/bmm350.h"
+#include "../sensor/BMI3XY_SensorAPI/bmi323.h"
+#include "../sensor/BMM350_SensorAPI/examples/common/common.h"
+#undef _COMMON_H
+#include "../sensor/BMI3XY_SensorAPI/bmi323_examples/common/common.h"
+}
 
 class SocketListener {
 public:
@@ -19,74 +29,34 @@ public:
     bool peerConnected = false;
 
     SocketListener() = delete;
-    SocketListener(std::string socket_path) : sock_path(socket_path.c_str()) {
-        
-        unlink(this->sock_path);
+    SocketListener(std::string socket_path);
 
-        this->server_endpoint = socket(AF_UNIX, SOCK_STREAM, 0);
-
-        if (this->server_endpoint == -1) {
-            // TODO: Output the path of the UNIX socket as well
-            std::runtime_error("Failed to get an endpoint for the UNIX socket");
-        }
-
-        unlink(this->sock_path);
-        struct sockaddr_un addr;
-        std::memset(&addr, 0, sizeof(addr));
-        addr.sun_family = AF_UNIX;
-        std::strncpy(addr.sun_path, this->sock_path, sizeof(addr.sun_path) - 1);
-
-        if (bind(this->server_endpoint, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-            close(this->server_endpoint);
-            std::runtime_error("Failed to bind the socket to the endpoint");
-        }
-
-        if (listen(this->server_endpoint, 5) == -1) {
-            std::cerr << "Listen failed\n";
-            close(this->server_endpoint);
-            std::runtime_error("Failed to listen to the socket. Try running with sudo.");
-        }
-    };
-
-    ~SocketListener() {
-        close(this->server_endpoint);
-        close(this->client_endpoint);
-        unlink(this->sock_path);
-    }
+    ~SocketListener();
 
     /**
      * @brief
      * @note This method is blocking due to the call to `accept`
      */
-    void attemptConnection() {
-        this->client_endpoint = accept(this->server_endpoint, nullptr, nullptr);
-        if (this->client_endpoint == -1) {
-            std::runtime_error("Failed to accept socket connection");
-        } else {
-            this->peerConnected = true;
-        }
-    }
+    void attemptConnection();
 
-    std::string fetchData() {
-        std::memset(data, 0, sizeof(data));
-        //char old_data[256];
-        //memcpy(old_data, this->data,256);
-        ssize_t bytes_received = recv(this->client_endpoint, data, sizeof(data) - 1, 0);
-        if (!this->peerConnected) {
-            this->attemptConnection();
-        } 
-
-        if (bytes_received == 0) {
-            //memcpy(this->data, old_data, 256);
-            std::cout << "Peer disconnected from the socket\n";
-            this->peerConnected = false;
-            return "";
-        } else if (bytes_received < 0){
-            std::cout << "Failed the read from socket"<< std::strerror(errno) << errno<<"\n";
-            return "";
-        } else {
-            //std::cout << this->data << "\n";   
-            return this->data;
-        }
-    }
+    std::string fetchData();
 };
+
+struct MoveData
+{
+    float azimuth, elevation;
+
+    void readData(std::string input_data);
+};
+
+void init(bmm350_dev &mag, bmi3_dev &imu, Motor &azimuth_motor, Motor &elevation_motor);
+
+float stepsToDegrees(int steps);
+int degreesToSteps(float degrees);
+
+void setAngleSetpoint(Motor &motor, float degrees);
+void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
+void calibrateElevation(Motor& elevation_motor, MoveData data);
+
+void readMagData(bmm350_dev &mag, bmm350_mag_temp_data &mag_data);
+void readIMUData(bmi3_dev &imu, bmi3_sensor_data &imu_data);
