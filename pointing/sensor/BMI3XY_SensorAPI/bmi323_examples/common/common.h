@@ -12,7 +12,7 @@
 extern "C" {
 #endif /*__cplusplus */
 
-#include "bmi3.h"
+#include "../../bmi3.h"
 
 /******************************************************************************/
 /*!                       Macro definitions                                   */
