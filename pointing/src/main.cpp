@@ -8,19 +8,11 @@
 
 #include "pointing.hpp"
 
-<<<<<<< HEAD
 #include "../sensor/BMM350_SensorAPI/bmm350.h"
 #include "../sensor/BMI3XY_SensorAPI/bmi323.h"
 #include "../sensor/BMM350_SensorAPI/examples/common/common.h"
 #undef _COMMON_H
 #include "../sensor/BMI3XY_SensorAPI/bmi323_examples/common/common.h"
-
-struct MoveData
-{
-    float azimuth, elevation;
-
-    void readData(std::string input_data);
-};
 
 void init(bmm350_dev &mag, bmi3_dev &imu, Motor &azimuth_motor, Motor &elevation_motor);
 
@@ -31,8 +23,6 @@ void setAngleSetpoint(Motor &motor, float degrees);
 void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
 void calibrateElevation(Motor& elevation_motor, MoveData data);
 
-=======
->>>>>>> 09635af (IT BUILDS AND LINKS!!!!)
 int main()
 {
     bmi3_sensor_data imu_data[2] = { 0 };
@@ -71,7 +61,6 @@ int main()
     //     //elevation_motor.drive();
     //     azimuth_motor.drive();
     // }
-<<<<<<< HEAD
 }
 
 void init(bmm350_dev &mag, bmi3_dev &imu, Motor &azimuth_motor, Motor &elevation_motor)
@@ -233,6 +222,3 @@ void setAngleSetpoint(Motor &motor, float degrees)
 //     elevation_motor.setSetpointType(og_type);
 
 // }
-=======
-}
->>>>>>> 09635af (IT BUILDS AND LINKS!!!!)
