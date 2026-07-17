@@ -1,1 +1,3 @@
 astropy
+smbus2
+pyubx2

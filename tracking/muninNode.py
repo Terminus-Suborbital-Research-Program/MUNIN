@@ -1,6 +1,7 @@
 import socket
 import os 
 from typing import Self
+import astropy
 
 class MuninNode:
     """Class representing a Munin node"""
