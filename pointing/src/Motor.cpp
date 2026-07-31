@@ -180,7 +180,7 @@ std::chrono::microseconds Motor::PID::outputD()
         case SetpointType::kSTEP:
             return std::chrono::microseconds(int(
                 D_constant *
-                double(step_sp_error - last_step_sp_error) /
+                double(step_sp_error) / // - last_step_sp_error)
                 double(time_difference.count())));
 
         case SetpointType::kNONE:

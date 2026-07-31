@@ -6,9 +6,9 @@
 #include <math.h>
 
 
+#include "constants.hpp"
 #include "pointing.hpp"
 
-<<<<<<< HEAD
 #include "../sensor/BMM350_SensorAPI/bmm350.h"
 #include "../sensor/BMI3XY_SensorAPI/bmi323.h"
 #include "../sensor/BMM350_SensorAPI/examples/common/common.h"
@@ -24,8 +24,6 @@ void setAngleSetpoint(Motor &motor, float degrees);
 void calibrateAzimuth(Motor& azimuth_motor, MoveData data, float mag_declination_east_degrees);
 void calibrateElevation(Motor& elevation_motor, MoveData data);
 
-=======
->>>>>>> 09635aff13354b7dfbc73bac2a14cb57f8c60b54
 int main()
 {
     bmi3_sensor_data imu_data[2] = { 0 };
@@ -44,6 +42,14 @@ int main()
     Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
     init(mag, imu, azimuth_motor, elevation_motor);
+
+    azimuth_motor.setPID(0.5, 0.0, 0.5, constants::INIT_PWM_DELAY);
+    azimuth_motor.setStepSetpoint(2000);
+
+    while (!azimuth_motor.atSetpoint())
+    {
+        azimuth_motor.drive();
+    }
 
 //    SocketListener listener(constants::SOCKET_PATH);
 
