@@ -52,7 +52,7 @@ int main()
     // elevation_motor.usePID(true);
 
     
-    azimuth_motor.setStepSetpoint(400);
+    azimuth_motor.setStepSetpoint(4000);
 
     while (!azimuth_motor.atSetpoint())
     {
