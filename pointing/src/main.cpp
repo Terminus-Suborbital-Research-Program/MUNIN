@@ -43,7 +43,7 @@ int main()
 
     //init(mag, imu, azimuth_motor, elevation_motor);
 
-    azimuth_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
+    azimuth_motor.setPID(0.5, 0.0, 0.5, constants::INIT_PWM_DELAY);
     azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
     azimuth_motor.usePID(true);
 
@@ -51,7 +51,7 @@ int main()
     elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
     elevation_motor.usePID(true);
 
-    azimuth_motor.setPID(0.5, 0.0, 0.5, constants::INIT_PWM_DELAY);
+    
     azimuth_motor.setStepSetpoint(400);
 
     while (!azimuth_motor.atSetpoint())
