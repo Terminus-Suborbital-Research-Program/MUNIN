@@ -57,6 +57,7 @@ int main()
     while (!azimuth_motor.atSetpoint())
     {
         azimuth_motor.drive();
+        std::cout << "Steps: " << azimuth_motor.getSteps() << "\n\r";
     }
 
 //    SocketListener listener(constants::SOCKET_PATH);
