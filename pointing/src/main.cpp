@@ -39,17 +39,17 @@ int main()
     //To get data sensor data to sensor_data: bmi323_get_sensor_data(sensor_data, 3, &dev);
 
     Motor azimuth_motor(constants::MICROSTEPS_PER_REV, constants::AZIMUTH_STEP_PIN, constants::AZIMUTH_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
-    Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
+    //Motor elevation_motor(constants::MICROSTEPS_PER_REV, constants::ELEVATION_STEP_PIN, constants::ELEVATION_DIR_PIN, constants::INIT_PWM_DELAY, constants::GPIO_CONTROLLER_PATH);
 
     //init(mag, imu, azimuth_motor, elevation_motor);
 
     azimuth_motor.setPID(0.5, 0.0, 0.5, constants::INIT_PWM_DELAY);
     azimuth_motor.setSetpointType(Motor::SetpointType::kSTEP);
-    azimuth_motor.usePID(true);
+    //azimuth_motor.usePID(true);
 
-    elevation_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
-    elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
-    elevation_motor.usePID(true);
+    // elevation_motor.setPID(1, 0, 0, 2 * constants::INIT_PWM_DELAY);
+    // elevation_motor.setSetpointType(Motor::SetpointType::kSTEP);
+    // elevation_motor.usePID(true);
 
     
     azimuth_motor.setStepSetpoint(400);
